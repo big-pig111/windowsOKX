@@ -227,6 +227,21 @@
                 display: none;
             }
         }
+
+        /* 桌面图标文字清晰化 */
+        .desktop-icon span {
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow:
+                0 0 2px #000,
+                0 0 4px #000,
+                1px 1px 0 #000,
+                -1px -1px 0 #000;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -244,8 +259,8 @@
         </div>
         
         <div class="desktop-icon" id="recycle-bin" draggable="true">
-            <i class="fas fa-trash"></i>
-            <span>Recycle Bin</span>
+            <img src="png/s.png" alt="Meme Laboratory" style="width: 32px; height: 32px; margin-bottom: 5px;">
+            <span>Meme Laboratory</span>
         </div>
         
         <div class="desktop-icon" id="internet-explorer" draggable="true">
