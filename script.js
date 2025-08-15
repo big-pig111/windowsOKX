@@ -19,6 +19,10 @@ class WindowsXP {
         
         // Set desktop icon positions
         this.positionDesktopIcons();
+        // 设置默认壁纸
+        document.body.style.backgroundImage = 'url("png/0.png")';
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
     }
 
     setupEventListeners() {
