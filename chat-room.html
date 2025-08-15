@@ -208,6 +208,27 @@
             // Scroll to bottom
             messageArea.scrollTop = messageArea.scrollHeight;
         }
+        // 连接动画
+        function showConnectingAnimation() {
+            const animId = 'connecting-anim';
+            if (document.getElementById(animId)) return;
+            const div = document.createElement('div');
+            div.id = animId;
+            div.style.position = 'absolute';
+            div.style.left = '50%';
+            div.style.top = '50%';
+            div.style.transform = 'translate(-50%, -50%)';
+            div.style.zIndex = '10';
+            div.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:10px;">'
+                +'<i class="fa fa-spinner fa-spin" style="font-size:32px;color:#245edc;"></i>'
+                +'<span style="color:#245edc;font-weight:bold;font-size:18px;">Connecting...</span>'
+                +'</div>';
+            messageArea.appendChild(div);
+        }
+        function hideConnectingAnimation() {
+            const anim = document.getElementById('connecting-anim');
+            if (anim) anim.remove();
+        }
         // Get current time (UTC)
         function getCurrentTime() {
             const now = new Date();
@@ -262,8 +283,11 @@
             clearTimeout(window._typingTimer);
             window._typingTimer = setTimeout(() => typingRef.remove(), 2000);
         });
+        // 进入页面时显示连接动画
+        showConnectingAnimation();
         // Firebase Auth & Presence
         firebase.auth().onAuthStateChanged(async (user) => {
+            hideConnectingAnimation();
             if (!user) {
                 await firebase.auth().signInAnonymously();
                 return;
