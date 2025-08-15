@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows XP Chat Room</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Configure Tailwind custom colors and fonts to simulate Windows XP style -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'xp-black': '#111',
+                        'xp-dark': '#222',
+                        'xp-gray': '#c0c0c0',
+                        'xp-lightgray': '#f0f0f0',
+                        'xp-bg': '#fff',
+                        'xp-taskbar': '#222',
+                    },
+                    fontFamily: {
+                        'xp': ['Inter', 'Press Start 2P', 'Tahoma', 'Segoe UI', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'xp-button': '1px 1px 0px #fff',
+                        'xp-button-pressed': 'inset 1px 1px 0px #fff',
+                        'xp-window': '2px 2px 0px #fff',
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .xp-border {
+                border-top: 1px solid #fff;
+                border-left: 1px solid #fff;
+                border-right: 1px solid #888;
+                border-bottom: 1px solid #888;
+            }
+            .xp-border-inverse {
+                border-top: 1px solid #888;
+                border-left: 1px solid #888;
+                border-right: 1px solid #fff;
+                border-bottom: 1px solid #fff;
+            }
+            .xp-title-gradient {
+                background: linear-gradient(90deg, #111, #222);
+            }
+            .xp-button-hover {
+                background-color: #c0c0c0;
+            }
+            .xp-button-active {
+                background-color: #c0c0c0;
+                border-top: 1px solid #888;
+                border-left: 1px solid #888;
+                border-right: 1px solid #fff;
+                border-bottom: 1px solid #fff;
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#111] font-xp min-h-screen flex flex-col">
+    <div class="flex-grow flex justify-center items-center p-4">
+        <!-- 只保留聊天窗口，移除登录窗口 -->
+        <div id="chatWindow" class="xp-border bg-xp-dark shadow-xp-window w-full max-w-5xl mx-auto">
+            <!-- Title bar -->
+            <!-- 已移除XP风格内置标题栏和按钮，交由外层窗口管理 -->
+            <!-- Window content -->
+            <div class="flex h-[500px]">
+                <!-- Left user list -->
+                <div class="w-1/4 border-r-2 border-gray-700 flex flex-col">
+                    <div class="p-2 bg-xp-lightgray xp-border-inverse text-sm font-bold text-black">
+                        <i class="fa fa-users mr-1"></i> Online Users
+                    </div>
+                    <div id="userList" class="flex-grow overflow-y-auto p-2 space-y-1 bg-white">
+                        <!-- User list will be dynamically generated here -->
+                        <div class="text-sm italic text-gray-500">Waiting for connection...</div>
+                    </div>
+                </div>
+                <!-- Right chat area -->
+                <div class="w-3/4 flex flex-col">
+                    <!-- Chat message area -->
+                    <div id="messageArea" class="flex-grow overflow-y-auto p-3 bg-white">
+                        <!-- Messages will be dynamically generated here -->
+                        <div class="text-center text-sm text-gray-500 mb-2">
+                            Welcome to Anonymous Chat Room
+                        </div>
+                        <div class="text-center text-sm text-gray-500">
+                            Start chatting below
+                        </div>
+                    </div>
+                    <!-- Input area separator -->
+                    <div class="h-px bg-gray-700"></div>
+                    <!-- Message input area -->
+                    <div class="p-2">
+                        <textarea id="messageInput" 
+                                  class="w-full h-20 xp-border bg-white px-2 py-1 focus:outline-none focus:ring-1 focus:ring-white resize-none"
+                                  placeholder="Enter message..."></textarea>
+                        <div class="flex justify-between mt-2">
+                            <div class="text-xs text-gray-400">
+                                <span id="connectionStatus" class="text-red-600">Disconnected</span>
+                            </div>
+                            <button id="sendButton" 
+                                    class="xp-border px-4 py-1 hover:xp-button-active transition-all flex items-center"
+                                    disabled>
+                                <i class="fa fa-paper-plane mr-1"></i> Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bottom taskbar -->
+    <div class="bg-xp-taskbar h-10 border-t: 1px solid #fff flex items-center px-2">
+        <div class="xp-border bg-xp-dark px-2 py-1 flex items-center text-sm font-bold">
+            <i class="fa fa-windows mr-2"></i>
+            <span>Start</span>
+        </div>
+        <div class="ml-4 flex items-center">
+            <div id="taskbarItem" class="bg-xp-lightgray px-3 py-1 xp-border-inverse text-sm flex items-center text-black">
+                <i class="fa fa-comments mr-2"></i>
+                <span>Chat Room</span>
+            </div>
+        </div>
+        <div class="ml-auto flex items-center mr-2">
+            <div class="text-xs px-2 py-1 xp-border-inverse text-black">
+                <span id="systemTime">00:00</span>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script>
+      // Firebase 配置（可替换为你的项目配置）
+      const firebaseConfig = {
+        apiKey: "AIzaSyA5Z5ieEbAcfQX0kxGSn9ldGXhzvAwx_8M",
+        authDomain: "chat-294cc.firebaseapp.com",
+        databaseURL: "https://chat-294cc-default-rtdb.firebaseio.com",
+        projectId: "chat-294cc",
+        storageBucket: "chat-294cc.appspot.com",
+        messagingSenderId: "913615304269",
+        appId: "1:913615304269:web:0274ffaccb8e6b678e4e04",
+        measurementId: "G-SJR9NDW86B"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+    <script>
+        // DOM element references
+        const chatWindow = document.getElementById('chatWindow');
+        const messageArea = document.getElementById('messageArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const userList = document.getElementById('userList');
+        const taskbarItem = document.getElementById('taskbarItem');
+        const chatTitle = document.getElementById('chatTitle');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const systemTime = document.getElementById('systemTime');
+        // Global variables
+        let username = localStorage.getItem('xp-username') || `XP-User#${Math.floor(1000+Math.random()*9000)}`;
+        let currentUser = null;
+        // Update system time (UTC)
+        function updateSystemTime() {
+            const now = new Date();
+            const hours = now.getUTCHours().toString().padStart(2, '0');
+            const minutes = now.getUTCMinutes().toString().padStart(2, '0');
+            systemTime.textContent = `${hours}:${minutes} UTC`;
+        }
+        updateSystemTime();
+        setInterval(updateSystemTime, 60000);
+        // Add message to chat area
+        function addMessage(sender, text, isSelf = false, isSystem = false, time = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `mb-3 ${isSelf ? 'text-right' : 'text-left'}`;
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `inline-block max-w-[80%] px-2 py-1 xp-border ${
+                isSystem ? 'bg-xp-lightgray' : 
+                isSelf ? 'bg-[#eaeaea]' : 'bg-white'
+            }`;
+            if (!isSystem) {
+                const senderSpan = document.createElement('div');
+                senderSpan.className = `text-xs font-bold text-gray-700`;
+                senderSpan.textContent = `${sender || 'Anonymous'} ${time ? time : getCurrentTime()}`;
+                messageBubble.appendChild(senderSpan);
+            } else {
+                const systemSpan = document.createElement('div');
+                systemSpan.className = 'text-xs text-gray-600 italic';
+                systemSpan.textContent = `${text} ${time ? time : getCurrentTime()}`;
+                messageBubble.appendChild(systemSpan);
+                messageDiv.className = 'mb-3 text-center';
+                messageDiv.appendChild(messageBubble);
+                messageArea.appendChild(messageDiv);
+                messageArea.scrollTop = messageArea.scrollHeight;
+                return;
+            }
+            const textSpan = document.createElement('div');
+            textSpan.className = 'text-sm';
+            textSpan.textContent = text;
+            messageBubble.appendChild(textSpan);
+            messageDiv.appendChild(messageBubble);
+            messageArea.appendChild(messageDiv);
+            // Scroll to bottom
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }
+        // Get current time (UTC)
+        function getCurrentTime() {
+            const now = new Date();
+            return `[${now.getUTCHours().toString().padStart(2, '0')}:${now.getUTCMinutes().toString().padStart(2, '0')} UTC]`;
+        }
+        // Update user list
+        function updateUserList(users) {
+            userList.innerHTML = '';
+            if (users.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'text-sm italic text-gray-500';
+                emptyMsg.textContent = 'No online users';
+                userList.appendChild(emptyMsg);
+                return;
+            }
+            users.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.className = `text-sm flex items-center`;
+                userDiv.innerHTML = `<i class="fa fa-user-circle mr-2 text-gray-700"></i> ${user.name || 'Anonymous'}`;
+                userList.appendChild(userDiv);
+            });
+        }
+        // Send message
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !currentUser) return;
+            firebase.database().ref('messages').push({
+                uid: currentUser.uid,
+                name: username,
+                text: message,
+                createdAt: Date.now(),
+                type: 'text'
+            });
+            messageInput.value = '';
+        }
+        // Taskbar item click event
+        taskbarItem.addEventListener('click', () => {
+            chatWindow.classList.remove('hidden');
+        });
+        // Typing event
+        messageInput.addEventListener('input', () => {
+            if (!currentUser) return;
+            const typingRef = firebase.database().ref(`typing/${currentUser.uid}`);
+            typingRef.set({ name: username, ts: Date.now() });
+            clearTimeout(window._typingTimer);
+            window._typingTimer = setTimeout(() => typingRef.remove(), 2000);
+        });
+        // Firebase Auth & Presence
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                await firebase.auth().signInAnonymously();
+                return;
+            }
+            currentUser = user;
+            // Presence
+            const presenceRef = firebase.database().ref(`presence/${user.uid}`);
+            const infoRef = firebase.database().ref('.info/connected');
+            infoRef.on('value', (snap) => {
+                if (snap.val() === true) {
+                    presenceRef.onDisconnect().remove();
+                    presenceRef.set({ name: username, ts: firebase.database.ServerValue.TIMESTAMP });
+                }
+            });
+            // 在线人数和用户列表
+            firebase.database().ref('presence').on('value', (snap) => {
+                const users = [];
+                snap.forEach(child => users.push(child.val()));
+                updateUserList(users);
+                connectionStatus.textContent = users.length > 0 ? 'Connected' : 'Disconnected';
+                connectionStatus.className = users.length > 0 ? 'text-green-600' : 'text-red-600';
+                sendButton.disabled = users.length === 0;
+            });
+            // 消息监听
+            firebase.database().ref('messages').limitToLast(200).on('child_added', (snap) => {
+                const msg = snap.val();
+                if (!msg) return;
+                addMessage(msg.name, msg.text, msg.uid === currentUser.uid, false, msg.createdAt ? `[${new Date(msg.createdAt).getUTCHours().toString().padStart(2, '0')}:${new Date(msg.createdAt).getUTCMinutes().toString().padStart(2, '0')} UTC]` : null);
+            });
+            // 打字提示
+            firebase.database().ref('typing').on('value', (snap) => {
+                const typing = snap.val() || {};
+                const otherTyping = Object.keys(typing).filter(uid => uid !== currentUser?.uid);
+                if (otherTyping.length > 0) {
+                    connectionStatus.textContent = 'Someone is typing...';
+                    connectionStatus.className = 'text-yellow-600';
+                } else {
+                    // 由 presence 事件自动恢复
+                }
+            });
+        });
+        // Button interaction effects
+        document.querySelectorAll('.xp-border:not(.xp-border-inverse)').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('xp-button-active');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('xp-button-active');
+            });
+            button.addEventListener('mouseleave', () => {
+                if (document.activeElement !== button) {
+                    button.classList.remove('xp-button-active');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

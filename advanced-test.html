@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKX MEME LAB | Explosive Image Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        okxBlack: '#0D0D0D',
+                        okxGreen: '#39FF14',
+                        okxGray: '#181818',
+                        okxWhite: '#fff',
+                    },
+                    fontFamily: {
+                        body: ['Inter', 'Helvetica', 'Arial', 'sans-serif'],
+                        display: ['"Press Start 2P"', 'Inter', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        okxGlow: '0 0 16px #39FF14, 0 0 2px #39FF14',
+                        okxGlowSm: '0 0 6px #39FF14',
+                        memePop: '0 0 0 4px #fff, 0 0 0 8px #39FF14, 0 0 24px #39FF14',
+                    },
+                    keyframes: {
+                        memeShake: {
+                            '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+                            '20%': { transform: 'translate(-2px, 2px) rotate(-2deg)' },
+                            '40%': { transform: 'translate(2px, -2px) rotate(2deg)' },
+                            '60%': { transform: 'translate(-2px, 2px) rotate(-1deg)' },
+                            '80%': { transform: 'translate(2px, 0) rotate(1deg)' },
+                        },
+                        memePop: {
+                            '0%': { transform: 'scale(0.7)', opacity: 0 },
+                            '80%': { transform: 'scale(1.1)', opacity: 1 },
+                            '100%': { transform: 'scale(1)', opacity: 1 },
+                        },
+                    },
+                    animation: {
+                        memeShake: 'memeShake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+                        memePop: 'memePop 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            background: #0D0D0D;
+            background-image: repeating-linear-gradient(0deg, #222 0 1px, transparent 1px 40px), repeating-linear-gradient(90deg, #222 0 1px, transparent 1px 40px);
+        }
+        .okx-glow {
+            box-shadow: 0 0 16px #39FF14, 0 0 2px #39FF14;
+        }
+        .okx-btn {
+            background: linear-gradient(90deg, #39FF14 0%, #1aff66 100%);
+            color: #0D0D0D;
+            border: none;
+            font-weight: bold;
+            border-radius: 9999px;
+            box-shadow: 0 0 0 #39FF14;
+            transition: box-shadow 0.2s, background 0.2s, color 0.2s, transform 0.1s;
+            font-family: 'Press Start 2P', Inter, Helvetica, Arial, sans-serif;
+            letter-spacing: 0.04em;
+        }
+        .okx-btn:hover {
+            box-shadow: 0 0 24px #39FF14, 0 0 2px #39FF14;
+            color: #fff;
+            transform: scale(1.05) rotate(-2deg);
+            animation: memeShake 0.4s;
+        }
+        .okx-title {
+            color: #39FF14;
+            font-family: 'Press Start 2P', Inter, Helvetica, Arial, sans-serif;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            font-size: 2.8rem;
+            line-height: 1.1;
+            text-shadow: 2px 2px 0 #fff, 0 0 12px #39FF14;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        .okx-label {
+            color: #39FF14;
+            font-weight: bold;
+            font-family: 'Press Start 2P', Inter, Helvetica, Arial, sans-serif;
+        }
+        .okx-input, .okx-textarea {
+            background: #181818;
+            color: #39FF14;
+            border: none;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-family: 'Press Start 2P', Inter, Helvetica, Arial, sans-serif;
+        }
+        .okx-input:focus, .okx-textarea:focus {
+            outline: none;
+            box-shadow: 0 0 8px #39FF14;
+        }
+        .okx-card {
+            background: #181818;
+            border-radius: 2rem;
+            box-shadow: 0 0 16px #39FF1422, 0 0 0 4px #fff, 0 0 0 8px #39FF14;
+            border: none;
+            position: relative;
+        }
+        .okx-card:before {
+            content: '💥';
+            position: absolute;
+            top: -1.5em;
+            left: 1.5em;
+            font-size: 2.2em;
+            filter: drop-shadow(0 0 8px #39FF14);
+            z-index: 2;
+        }
+        .okx-card.result:before {
+            content: '😂';
+            left: unset;
+            right: 1.5em;
+        }
+        .okx-link {
+            color: #39FF14;
+            text-decoration: underline;
+        }
+        .okx-link:hover {
+            color: #fff;
+            text-shadow: 0 0 8px #39FF14;
+        }
+        .okx-border {
+            border: 2px solid #39FF14 !important;
+            border-radius: 1.5rem;
+        }
+        .okx-logo {
+            font-family: 'Press Start 2P', Inter, Helvetica, Arial, sans-serif;
+            font-weight: 900;
+            font-size: 2.2rem;
+            letter-spacing: 0.1em;
+            color: #fff;
+            background: linear-gradient(90deg, #39FF14 0%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .okx-glow-anim {
+            animation: okx-glow-anim 1.5s infinite alternate;
+        }
+        @keyframes okx-glow-anim {
+            0% { box-shadow: 0 0 8px #39FF14; }
+            100% { box-shadow: 0 0 24px #39FF14, 0 0 2px #39FF14; }
+        }
+        .meme-pop {
+            animation: memePop 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        .meme-shake {
+            animation: memeShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="bg-okxBlack text-okxWhite font-body min-h-screen flex flex-col justify-between">
+    <!-- 闪电emoji点缀 -->
+    <div class="fixed top-8 left-8 text-4xl select-none pointer-events-none" style="z-index:1;">⚡</div>
+    <div class="fixed bottom-8 right-8 text-4xl select-none pointer-events-none" style="z-index:1;">🚀</div>
+    <header class="pt-12 pb-8 px-4 relative z-10 flex flex-col items-center">
+        <div class="max-w-2xl w-full flex flex-col items-center">
+            <div class="okx-logo okx-glow-anim mb-2">OKX</div>
+            <h1 class="okx-title mb-2 text-center"><span>MEME LAB</span> <span class="text-3xl">💥</span></h1>
+            <p class="text-lg text-okxGreen mb-4 text-center">Detonate your images with OKX-style meme transformation <span class="ml-2">🤑</span></p>
+            <!-- 删除CA显示区域 -->
+            <!-- <div class="inline-flex items-center gap-3 bg-okxGray px-3 py-2 rounded-2xl border-okxGreen border mb-2 meme-shake">
+                <span class="text-xs font-mono tracking-wider text-okxGreen">CA</span>
+                <code id="ca-value" class="text-sm font-mono text-okxWhite">soon</code>
+                <button id="copy-ca" class="text-xs okx-btn px-3 py-1 rounded-full">COPY</button>
+            </div> -->
+        </div>
+    </header>
+    <main class="flex-1 flex flex-col items-center justify-center w-full px-4">
+        <div class="max-w-xl w-full grid grid-cols-1 gap-10 mb-16">
+            <div class="okx-card p-8 flex flex-col items-center meme-shake">
+                <h2 class="text-2xl okx-title mb-6 flex items-center justify-center"><span class="mr-2">01</span> INPUT MATERIAL <span class="ml-2">🔥</span></h2>
+                <div id="upload-area" class="relative okx-border bg-okxGray cursor-pointer hover:bg-[#222] transition-all overflow-hidden p-0 min-h-[240px] flex flex-col items-center justify-center mb-4 meme-shake">
+                    <input type="file" id="image-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <img id="preview-image" src="" alt="Preview image" class="hidden w-full max-h-[420px] object-contain rounded-2xl meme-pop" />
+                    <div id="upload-hint" class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                        <i class="fa fa-upload text-5xl text-okxGreen mb-4"></i>
+                        <p class="text-lg font-bold text-okxGreen">DROP IMAGE HERE</p>
+                        <p class="text-sm text-okxGreen mt-2">JPG/PNG ONLY</p>
+                    </div>
+                    <div id="uploading-overlay" class="hidden absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-20 rounded-2xl">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 border-4 border-okxGreen border-t-okxWhite rounded-full animate-spin mb-3"></div>
+                            <p class="text-okxWhite text-sm font-bold">UPLOADING...</p>
+                        </div>
+                    </div>
+                    <button id="select-image-btn" type="button" class="okx-btn px-6 py-3 rounded-full text-lg font-bold mt-4 z-20" style="position:relative;">Select Image / SELECT IMAGE</button>
+                </div>
+                <div class="mt-3 flex gap-2">
+                    <button id="crop-start" class="okx-btn text-sm px-4 py-2 rounded-full hidden"><i class="fa fa-crop mr-1"></i>Crop</button>
+                    <button id="crop-apply" class="okx-btn text-sm px-4 py-2 rounded-full hidden"><i class="fa fa-check mr-1"></i>Apply</button>
+                    <button id="crop-cancel" class="okx-btn text-sm px-4 py-2 rounded-full hidden"><i class="fa fa-times mr-1"></i>Cancel</button>
+                </div>
+                <!-- Style prompt input (hidden, fixed) -->
+                <div class="mt-6 text-left hidden">
+                    <label for="prompt-input" class="okx-label mb-2">STYLE PROMPT</label>
+                    <textarea id="prompt-input" class="okx-textarea w-full text-sm" rows="5" placeholder="Enter your style prompt here..."></textarea>
+                    <p class="text-xs text-okxGreen mt-1">Customize your image transformation style</p>
+                </div>
+                <!-- Strength control (hidden, fixed) -->
+                <div class="mt-4 text-left hidden">
+                    <label for="strength-slider" class="okx-label mb-2">STYLE STRENGTH: <span id="strength-value" class="text-okxGreen">0.36</span></label>
+                    <input type="range" id="strength-slider" min="0.01" max="0.5" step="0.01" value="0.36" class="w-full h-3 bg-okxGray rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-okxGreen mt-1">
+                        <span>More Original</span>
+                        <span>More Style</span>
+                    </div>
+                </div>
+                <div class="mt-6 text-center w-full">
+                    <button id="convert-btn" class="okx-btn font-display font-bold py-4 px-8 text-lg rounded-full w-full okx-glow-anim meme-shake">NUKE IT! 💥</button>
+                </div>
+            </div>
+            <div class="okx-card p-8 flex flex-col items-center result meme-pop">
+                <h2 class="text-2xl okx-title mb-6 flex items-center justify-center"><span class="mr-2">02</span> EXPLOSION RESULT <span class="ml-2">😂</span></h2>
+                <div id="result-area" class="okx-border p-8 text-center bg-okxGray min-h-[240px] rounded-2xl meme-shake">
+                    <i class="fa fa-bomb text-5xl text-okxGreen mb-4"></i>
+                    <p class="text-lg font-bold text-okxGreen">RESULT WILL APPEAR HERE</p>
+                    <p class="text-sm text-okxGreen mt-2">INITIATE DETONATION</p>
+                </div>
+                <div id="result-container" class="mt-6 hidden w-full flex flex-col items-center meme-pop">
+                    <div class="flex items-center mb-3">
+                        <h3 class="font-bold text-okxGreen">DETONATED MEME</h3>
+                        <span class="ml-3 bg-okxGreen text-okxBlack text-xs px-2 py-1 rounded-full">COMPLETE 🚀</span>
+                    </div>
+                    <div class="okx-border p-1 w-full rounded-2xl meme-pop">
+                        <img id="result-image" src="" alt="Meme result image" class="max-w-full h-auto rounded-2xl meme-pop">
+                    </div>
+                    <button id="download-btn" class="mt-5 okx-btn font-bold py-3 px-6 rounded-full flex items-center okx-glow-anim meme-shake"><i class="fa fa-download mr-2"></i> MEMEIFY! 😂</button>
+                </div>
+            </div>
+        </div>
+        <!-- Loading animation with glitch effect -->
+        <div id="loading-animation" class="fixed inset-0 bg-okxBlack bg-opacity-95 flex flex-col items-center justify-center z-50 hidden">
+            <div class="w-24 h-24 border-4 border-okxGreen border-t-okxWhite rounded-full animate-spin mb-8"></div>
+            <h3 class="text-2xl okx-title mb-4 text-okxWhite">DETONATION IN PROGRESS</h3>
+            <p class="text-okxGreen font-mono text-lg mb-6">SYSTEM: 87% COMPLETE</p>
+            <div class="w-64 h-2 bg-okxGray mb-12 rounded-full">
+                <div class="h-full bg-okxGreen w-0 rounded-full" id="progress-bar"></div>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-okxBlack border-t-4 border-okxGreen py-8 px-4 relative z-10">
+        <div class="max-w-2xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0 flex flex-col items-center md:items-start">
+                <div class="okx-logo mb-1">OKX</div>
+                <p class="text-okxGreen text-sm">OKX STYLE • VIRAL RESEARCH LAB</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="https://www.okx.com/" target="_blank" rel="noopener" class="w-10 h-10 bg-okxBlack border-2 border-okxGreen flex items-center justify-center hover:bg-okxGreen hover:text-okxBlack transition-colors okx-glow rounded-full meme-shake">
+                    <i class="fa fa-btc"></i>
+                </a>
+                <a href="https://twitter.com/okx" target="_blank" rel="noopener" class="w-10 h-10 bg-okxBlack border-2 border-okxGreen flex items-center justify-center hover:bg-okxGreen hover:text-okxBlack transition-colors okx-glow rounded-full meme-shake">
+                    <i class="fa fa-twitter"></i>
+                </a>
+                <a href="https://www.okx.com/markets" target="_blank" rel="noopener" class="w-10 h-10 bg-okxBlack border-2 border-okxGreen flex items-center justify-center hover:bg-okxGreen hover:text-okxBlack transition-colors okx-glow rounded-full meme-shake">
+                    <i class="fa fa-line-chart"></i>
+                </a>
+            </div>
+        </div>
+        <div class="border-t border-okxGray mt-8 pt-8 text-center text-okxGreen text-sm">
+            <p>WARNING: OKX MEME LAB IS FOR ENTERTAINMENT PURPOSES ONLY. NOT RESPONSIBLE FOR VIRAL CONTENT.</p>
+            <p class="mt-2">© 2023 OKX MEME LABORATORIES. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+      import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+      import { getStorage, ref, uploadBytes } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+      import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
+
+      const cfg = {
+        apiKey: "AIzaSyA5Z5ieEbAcfQX0kxGSn9ldGXhzvAwx_8M",
+        authDomain: "chat-294cc.firebaseapp.com",
+        databaseURL: "https://chat-294cc-default-rtdb.firebaseio.com",
+        projectId: "chat-294cc",
+        storageBucket: "chat-294cc.firebasestorage.app",
+        messagingSenderId: "913615304269",
+        appId: "1:913615304269:web:0274ffaccb8e6b678e4e04",
+        measurementId: "G-SJR9NDW86B"
+      };
+
+      const app = initializeApp(cfg);
+      const auth = getAuth(app);
+      const storage = getStorage(app);
+      const functions = getFunctions(app, 'us-central1');
+
+      // Elements
+      const uploadArea = document.getElementById('upload-area');
+      const imageUpload = document.getElementById('image-upload');
+      const previewImage = document.getElementById('preview-image');
+      const uploadHint = document.getElementById('upload-hint');
+      const promptInput = document.getElementById('prompt-input');
+      const convertBtn = document.getElementById('convert-btn');
+      const cropStartBtn = document.getElementById('crop-start');
+      const cropApplyBtn = document.getElementById('crop-apply');
+      const cropCancelBtn = document.getElementById('crop-cancel');
+      const uploadingOverlay = document.getElementById('uploading-overlay');
+      const selectImageBtn = document.getElementById('select-image-btn');
+      if (selectImageBtn && imageUpload) {
+        selectImageBtn.addEventListener('click', () => imageUpload.click());
+      }
+
+      let cropper = null;
+      const loadingAnimation = document.getElementById('loading-animation');
+      const resultArea = document.getElementById('result-area');
+      const resultContainer = document.getElementById('result-container');
+      const resultImage = document.getElementById('result-image');
+      const downloadBtn = document.getElementById('download-btn');
+             const caValue = document.getElementById('ca-value');
+       const copyCaBtn = document.getElementById('copy-ca');
+       const strengthSlider = document.getElementById('strength-slider');
+       const strengthValue = document.getElementById('strength-value');
+
+      // State
+      let selectedImage = null;
+      convertBtn.disabled = true;
+
+             // Default OKX brand style prompt
+       const DEFAULT_PROMPT = `A plush black bunny mascot with big green eyes, lying sideways on a hospital bed, looking tired and bored. The background shows medical equipment and a computer keyboard. The bunny has a glowing OKX pixel logo on its chest. The scene is in a modern hospital room, soft lighting, high detail, digital art, black and neon green as dominant colors, minimalistic futuristic tech background, cyberpunk neon glow effects, sharp clean lines, high-contrast lighting, strictly black & neon green color palette, OKX meme style.`;
+       promptInput.value = DEFAULT_PROMPT;
+
+       // Set fixed strength to 0.3
+       strengthSlider.value = 0.3;
+       strengthValue.textContent = '0.3';
+
+       // Strength slider control
+       strengthSlider.addEventListener('input', (e) => {
+         strengthValue.textContent = e.target.value;
+       });
+
+      // Upload interactions
+      // 仅使用覆盖的 input[type=file] 触发选择，避免重复弹窗
+      uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('bg-gray-200'); });
+      uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('bg-gray-200'));
+      uploadArea.addEventListener('drop', (e) => { e.preventDefault(); uploadArea.classList.remove('bg-gray-200'); if (e.dataTransfer.files.length) handleImageUpload(e.dataTransfer.files[0]); });
+      imageUpload.addEventListener('change', () => { if (imageUpload.files.length) handleImageUpload(imageUpload.files[0]); });
+
+      function handleImageUpload(file) {
+        if (!file.type.match('image.*')) { alert('Please select an image file.'); return; }
+        selectedImage = file;
+        const reader = new FileReader();
+        reader.onload = (e) => { 
+          previewImage.src = e.target.result; 
+          previewImage.classList.remove('hidden');
+          if (uploadHint) uploadHint.style.display = 'none';
+          convertBtn.disabled = false; 
+          cropStartBtn.classList.remove('hidden');
+          cropApplyBtn.classList.add('hidden');
+          cropCancelBtn.classList.add('hidden');
+          if (cropper) { cropper.destroy(); cropper = null; }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Cropper actions
+      cropStartBtn.addEventListener('click', () => {
+        if (cropper) return;
+        cropper = new window.Cropper(previewImage, {
+          aspectRatio: 1,
+          viewMode: 1,
+          autoCropArea: 1,
+          background: false,
+        });
+        cropApplyBtn.classList.remove('hidden');
+        cropCancelBtn.classList.remove('hidden');
+        cropStartBtn.classList.add('hidden');
+      });
+
+      // Select Image Button
+      if (selectImageBtn) {
+        selectImageBtn.addEventListener('click', () => {
+          imageUpload.click();
+        });
+      }
+
+      // Copy CA
+      if (copyCaBtn) {
+        copyCaBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(caValue?.textContent || 'soon');
+            copyCaBtn.textContent = 'COPIED';
+            setTimeout(() => (copyCaBtn.textContent = 'COPY'), 1200);
+          } catch (e) {
+            alert('Copy failed');
+          }
+        });
+      }
+
+      cropCancelBtn.addEventListener('click', () => {
+        if (!cropper) return;
+        cropper.destroy();
+        cropper = null;
+        cropApplyBtn.classList.add('hidden');
+        cropCancelBtn.classList.add('hidden');
+        cropStartBtn.classList.remove('hidden');
+      });
+
+      cropApplyBtn.addEventListener('click', () => {
+        if (!cropper) return;
+        const canvas = cropper.getCroppedCanvas({ width: 1024, height: 1024 });
+        canvas.toBlob((blob) => {
+          if (!blob) return;
+          const newFile = new File([blob], 'cropped.png', { type: 'image/png' });
+          selectedImage = newFile;
+          previewImage.src = canvas.toDataURL('image/png');
+          cropper.destroy();
+          cropper = null;
+          cropApplyBtn.classList.add('hidden');
+          cropCancelBtn.classList.add('hidden');
+          cropStartBtn.classList.remove('hidden');
+        }, 'image/png', 0.95);
+      });
+
+      async function ensureAuth() { if (!auth.currentUser) await signInAnonymously(auth); return auth.currentUser; }
+      async function uploadToStorage(file, uid) {
+        const safe = file.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        const path = `user_uploads/${uid}/${Date.now()}_${safe}`;
+        try {
+          uploadingOverlay.classList.remove('hidden');
+          await uploadBytes(ref(storage, path), file, { contentType: file.type || 'image/png' });
+        } finally {
+          uploadingOverlay.classList.add('hidden');
+        }
+        return path;
+      }
+      async function callStyleTransfer(storagePath, stylePrompt) {
+        const fn = httpsCallable(functions, 'advancedStyleTransfer');
+        const res = await fn({ 
+          storagePath, 
+          stylePrompt,
+          model: 'sdxl-turbo',
+          imageStrength: 0.3,  // 固定强度为0.3
+          steps: 28,
+          cfg_scale: 6.5,
+          preferredSize: '1024x1024',
+          enhanceDetails: false
+        });
+        return res.data;
+      }
+
+      convertBtn.addEventListener('click', async () => {
+        try {
+          if (!selectedImage) { alert('Please upload an image first.'); return; }
+          const prompt = promptInput.value || DEFAULT_PROMPT;
+          loadingAnimation.classList.remove('hidden');
+          const user = await ensureAuth();
+          const storagePath = await uploadToStorage(selectedImage, user.uid);
+          const { downloadUrl } = await callStyleTransfer(storagePath, prompt);
+          resultImage.src = downloadUrl;
+          resultArea.classList.add('hidden');
+          resultContainer.classList.remove('hidden');
+        } catch (e) {
+          alert(`调用失败：${e.message || e}`);
+          console.error(e);
+        } finally {
+          loadingAnimation.classList.add('hidden');
+        }
+      });
+
+      downloadBtn.addEventListener('click', async () => {
+        const url = resultImage.src;
+        if (!url) { alert('No image to download'); return; }
+        try {
+          const resp = await fetch(url, { mode: 'cors', credentials: 'omit' });
+          if (!resp.ok) throw new Error('Download failed');
+          const blob = await resp.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = 'styled.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
+        } catch (e) {
+          // Fallback if CORS blocks direct download
+          window.open(url, '_blank');
+        }
+      });
+    </script>   
+</body>
+</html>
+    
