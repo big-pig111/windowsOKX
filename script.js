@@ -130,7 +130,7 @@ class WindowsXP {
                 this.launchApp('my-documents');
             break;
         case 'recycle-bin':
-                window.open('https://dyorswap.org/home/?chainId=196', '_blank');
+                window.open('https://dyorswap.org/launchinfo/?id=0x3F7D787471e01a4D93f180647f5C5b770DAf5204&chainId=196', '_blank');
             break;
         case 'internet-explorer':
                 window.location.href = 'https://x.com/windowsokb?s=21';
