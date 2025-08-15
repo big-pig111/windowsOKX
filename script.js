@@ -130,21 +130,21 @@ class WindowsXP {
                 this.launchApp('my-documents');
             break;
         case 'recycle-bin':
-                this.launchApp('recycle-bin');
+                window.open('https://dyorswap.org/home/?chainId=196', '_blank');
             break;
         case 'internet-explorer':
-                this.launchApp('internet-explorer');
+                window.location.href = 'https://x.com/windowsokb?s=21';
                 break;
-            case 'chat-room':
+        case 'chat-room':
                 this.launchApp('chat-room');
                 break;
-            case 'games':
+        case 'games':
                 this.launchApp('games');
                 break;
-            case 'xp-tv':
+        case 'xp-tv':
                 this.launchApp('xp-tv');
                 break;
-            case 'advanced-test':
+        case 'advanced-test':
                 this.launchApp('advanced-test');
                 break;
         }
